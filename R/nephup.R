@@ -3,13 +3,14 @@
 # Created by: Carlos Mesquita
 # Date: 30/11/2015
 # Created: 31/04/2016
-# Modified: 21/01/2020
+# Modified: 21/01/2026
 # Packges used: 
-# R (3.6.2)
+# R (4.3.2)
 ##This new "nephup" function replaces previous function created by
 #Neil. This function reads the stock object from the previous year
 #and adds new data from txt files (same format as before)
-#Modified: 21/04/2017 #To include BMS data if available
+# Modified: 21/04/2017 #To include BMS data if available
+# Modified: 21/01/2026 #amendment on the function to work with the most recent FLRCore package version
 ###############################################################
 
 nephup <-
@@ -41,15 +42,21 @@ function(wdir, stock.object, lfile, bmsfile=NULL, filenames)
   #Fix to allow "expand" function to work on stock object. This is because in the new FLCore library a "validate" function was introduced which fails due to the "landings" slot not being considerate valid. CM 21/01/2020
   temp.obj.landings<- stock.obj@landings
   stock.obj@landings<- computeLandings(stock.obj)
-  temp.obj.landings<- expand(temp.obj.landings, year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year)
+  #temp.obj.landings<- expand(temp.obj.landings, year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year)
+  temp.obj.landings<- window(temp.obj.landings, start=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]), end=landings.end.year) #21/06/2026 expand replaced by window
   
+
   #Expand existing object to the new landings year 
-  stock.obj<- suppressWarnings(expand(stock.obj, year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year))
+  #stock.obj<- suppressWarnings(expand(stock.obj, year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year))
+  stock.obj<- window(stock.obj, end=landings.end.year) #21/06/2026 expand replaced by window
   stock.obj@landings<- temp.obj.landings
   
   #Expand the 2 attributes to the stock object related with BMS
-  attr(stock.obj,"bms")<- suppressWarnings(expand(attr(stock.obj,"bms"), year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year)); attr(stock.obj,"bms")[,as.character(landings.end.year),,,,]<- 0
-  attr(stock.obj,"bms.n")<- suppressWarnings(expand(attr(stock.obj,"bms.n"), year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year)); 
+  #attr(stock.obj,"bms")<- suppressWarnings(expand(attr(stock.obj,"bms"), year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year)); attr(stock.obj,"bms")[,as.character(landings.end.year),,,,]<- 0
+  #attr(stock.obj,"bms.n")<- suppressWarnings(expand(attr(stock.obj,"bms.n"), year=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]):landings.end.year)); 
+  attr(stock.obj,"bms")<- window(attr(stock.obj,"bms"), start=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]), end=landings.end.year); attr(stock.obj,"bms")[,as.character(landings.end.year),,,,]<- 0 #21/06/2026 expand replaced by window
+  attr(stock.obj,"bms.n")<- window(attr(stock.obj,"bms.n"), start=as.numeric(stock.obj@range[names(stock.obj@range) == "minyear"]), end=landings.end.year) #21/06/2026 expand replaced by window
+  
   
   for(y in as.character(seq(landings.start.year,landings.end.year)))
   {
