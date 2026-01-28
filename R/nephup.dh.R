@@ -299,25 +299,22 @@ function(wdir, lfile, msfile,lclass, lwparams)
 
   #27/01/2026 fix to work with latest FLCore version (AA)
   dn <- dimnames(neph.landings.n)
-  empty_FLQ <- function(x) {
-    FLQuant(NA, dimnames = dimnames(x))
-  }
 
   return.stock <- FLStock(
     name        = stock,
-    stock.n     = empty_FLQ(neph.landings.n),
+    stock.n     = FLQuant(NA, dimnames = dn),
     stock.wt    = neph.discard.wt,
     landings.n  = neph.landings.n,
     landings.wt = neph.discard.wt,
-    discards.n  = empty_FLQ(neph.landings.n),
-    discards.wt = empty_FLQ(neph.discard.wt),
-    catch.n     = empty_FLQ(neph.landings.n),
-    catch.wt    = empty_FLQ(neph.discard.wt),
-    m           = empty_FLQ(neph.landings.n),
-    mat         = empty_FLQ(neph.landings.n),
-    harvest     = empty_FLQ(neph.landings.n),
-    harvest.spwn= empty_FLQ(neph.landings.n),
-    m.spwn      = empty_FLQ(neph.landings.n)
+    discards.n  = FLQuant(NA, dimnames = dn),
+    discards.wt = FLQuant(NA, dimnames = dn),
+    catch.n     = FLQuant(NA, dimnames = dn),
+    catch.wt    = FLQuant(NA, dimnames = dn),
+    m           = FLQuant(NA, dimnames = dn),
+    mat         = FLQuant(NA, dimnames = dn),
+    harvest     = FLQuant(NA, dimnames = dn),
+    harvest.spwn= FLQuant(NA, dimnames = dn),
+    m.spwn      = FLQuant(NA, dimnames = dn)
   )
   return.stock@landings <- neph.landings
   #end fix
